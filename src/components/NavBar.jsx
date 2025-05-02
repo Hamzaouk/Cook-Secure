@@ -15,7 +15,7 @@ function NavBar() {
           {/* Logo - Top Left */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center transition-transform duration-300 hover:scale-105">
-              <img className="h-32 w-auto" src={logo} alt="Logo" />
+              <img className="h-12 w-auto" src={logo} alt="Logo" />
               <p className="sr-only">Website Title</p>
             </Link>
           </div>
