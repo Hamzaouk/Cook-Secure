@@ -1,19 +1,58 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import LoginValidation from './validation/LoginValidation';
+import api from './Api';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const [loginError, setLoginError] = useState('');
+
   const initialValues = {
     email: '',
     password: '',
     rememberMe: false
   };
 
-  const handleSubmit = (values, { setSubmitting }) => {
-    console.log('Form values:', values);
-    // Handle login logic here
-    setSubmitting(false);
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      setLoginError('');
+      
+      // Check if user exists with given email
+      const response = await api.get(`/users?email=${values.email}`);
+      
+      if (response.data.length === 0) {
+        setLoginError('No account found with this email address');
+        setSubmitting(false);
+        return;
+      }
+      
+      const user = response.data[0];
+      
+      // Simple password check
+      // In a real app, you would use bcrypt or another secure method
+      if (user.password !== values.password) {
+        setLoginError('Invalid password');
+        setSubmitting(false);
+        return;
+      }
+      
+      // Login successful
+      // Remove password from stored user data for security
+      const { password, ...safeUserData } = user;
+      
+      // Store user info in localStorage (or you could use a state management solution like Redux)
+      localStorage.setItem('currentUser', JSON.stringify(safeUserData));
+      
+      // If remember me is checked, could implement persistent login here
+      
+      // Redirect to home page
+      navigate('/');
+    } catch (error) {
+      console.error('Login error:', error);
+      setLoginError('An error occurred during login. Please try again.');
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -29,6 +68,12 @@ const LoginPage = () => {
 
           {/* Form */}
           <div className="p-6">
+            {loginError && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                {loginError}
+              </div>
+            )}
+            
             <Formik
               initialValues={initialValues}
               validationSchema={LoginValidation}
@@ -67,7 +112,7 @@ const LoginPage = () => {
                       <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                         Password
                       </label>
-                      <Link to="" className="text-xs text-[#B95A5A] hover:text-[#9b4040]">
+                      <Link to="/forgot-password" className="text-xs text-[#B95A5A] hover:text-[#9b4040]">
                         Forgot password?
                       </Link>
                     </div>

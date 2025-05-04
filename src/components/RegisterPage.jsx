@@ -1,9 +1,13 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import RegisterValidation from './validation/RegisterValidation';
+import api from './api';
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
+  const [registerError, setRegisterError] = useState('');
+
   const initialValues = {
     username: '',
     email: '',
@@ -11,10 +15,53 @@ const RegisterPage = () => {
     terms: false,
   };
 
-  const handleSubmit = (values, { setSubmitting }) => {
-    console.log('Form values:', values);
-    // Handle registration logic here
-    setSubmitting(false);
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      setRegisterError('');
+      
+      // Check if email already exists
+      const emailCheck = await api.get(`/users?email=${values.email}`);
+      
+      if (emailCheck.data.length > 0) {
+        setRegisterError('An account with this email already exists');
+        setSubmitting(false);
+        return;
+      }
+      
+      // Check if username already exists
+      const usernameCheck = await api.get(`/users?username=${values.username}`);
+      
+      if (usernameCheck.data.length > 0) {
+        setRegisterError('This username is already taken');
+        setSubmitting(false);
+        return;
+      }
+      
+      // Create new user
+      const newUser = {
+        id: Date.now().toString(), // Simple ID generation
+        username: values.username,
+        email: values.email,
+        password: values.password, // In a real app, would hash this password
+        createdAt: new Date().toISOString()
+      };
+      
+      // Save user to database
+      await api.post('/users', newUser);
+      
+      // Redirect to login page
+      navigate('/login', { 
+        state: { 
+          registrationSuccess: true, 
+          email: values.email 
+        } 
+      });
+      
+    } catch (error) {
+      console.error('Registration error:', error);
+      setRegisterError('An error occurred during registration. Please try again.');
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -29,6 +76,12 @@ const RegisterPage = () => {
 
           {/* Form */}
           <div className="p-6">
+            {registerError && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                {registerError}
+              </div>
+            )}
+            
             <Formik
               initialValues={initialValues}
               validationSchema={RegisterValidation}
@@ -72,7 +125,7 @@ const RegisterPage = () => {
 
                   {/* Password */}
                   <div className="mb-6">
-                    <label htmlFor="password" className="block text-sm font-medium text-zinc-600 mb-1">
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                       Password
                     </label>
                     <Field
@@ -80,8 +133,8 @@ const RegisterPage = () => {
                       id="password"
                       name="password"
                       className={`w-full px-4 py-2 border ${
-                        touched.password && errors.password ? 'border-red-500' : 'border-zinc-600'
-                      } rounded-lg focus:ring-2 focus:ring-zinc-500 focus:border-zinc-500`}
+                        touched.password && errors.password ? 'border-red-500' : 'border-gray-300'
+                      } rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500`}
                       placeholder="Create a password"
                     />
                     <ErrorMessage name="password" component="div" className="mt-1 text-sm text-red-600" />
