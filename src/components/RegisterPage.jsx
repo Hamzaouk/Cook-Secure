@@ -46,7 +46,7 @@ const RegisterPage = () => {
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                 placeholder="Choose a username"
               />
             </div>
@@ -62,14 +62,14 @@ const RegisterPage = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                 placeholder="Enter your email"
               />
             </div>
 
             {/* Password */}
             <div className="mb-6">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-zinc-600 mb-1">
                 Password
               </label>
               <input
@@ -78,7 +78,7 @@ const RegisterPage = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2 border border-zinc-600 rounded-lg focus:ring-2 focus:ring-zinc-500 focus:border-zinc-500"
                 placeholder="Create a password"
               />
             </div>
@@ -91,12 +91,13 @@ const RegisterPage = () => {
                 name="terms"
                 checked={formData.terms}
                 onChange={handleChange}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                className="h-4 w-4 text-[#8B5C5C] focus:ring-[#8B5C5C] border-[#8B5C5C] rounded"
               />
-              <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
-                I agree to the <span className="text-blue-600">Terms of Service</span> and <span className="text-blue-600">Privacy Policy</span>
+              <label htmlFor="terms" className="ml-2 block text-sm text-[#8B5C5C]">
+                I agree to the <span className="text-[#8B5C5C]">Terms of Service</span> and <span className="text-[#8B5C5C]">Privacy Policy</span>
               </label>
             </div>
+
 
             {/* Register Button */}
             <button
@@ -112,11 +113,15 @@ const RegisterPage = () => {
           <div className="px-6 py-4 text-center" style={{ backgroundColor: '#585454' }}>
             <p className="text-sm text-white">
               Already have an account?{' '}
-              <Link to="/login" className="font-medium text-blue-300 hover:text-blue-200">
+              <Link
+                to="/login"
+                className="font-medium text-[#B95A5A] hover:text-[#9b4040] transition-colors duration-200"
+              >
                 Sign in
               </Link>
             </p>
           </div>
+
         </div>
       </div>
     </div>
